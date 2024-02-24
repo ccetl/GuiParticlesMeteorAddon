@@ -1,8 +1,6 @@
-# Meteor Addon Template
+# Particles for Meteor
 
-A template to allow easy usage of the Meteor Addon API.
+This Meteor addon adds particles to Minecraft's and Meteor's GUIs.
 
-### How to use:  
-- Clone this project
-- Use this template to create new modules/commands
-- Run the mod with Meteor.
+![img.png](.github/assets/img.png)
+![img.png](.github/assets/img2.png)

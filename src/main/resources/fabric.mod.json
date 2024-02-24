@@ -2,10 +2,10 @@
   "schemaVersion": 1,
   "id": "addon-template",
   "version": "${version}",
-  "name": "Addon Template",
-  "description": "An addon template for the Meteor addons.",
+  "name": "Particle Effects for Meteor",
+  "description": "An addon to add GUI particle effects.",
   "authors": [
-    "seasnail"
+    "ccetl"
   ],
   "contact": {
     "repo": "https://github.com/MeteorDevelopment/meteor-addon-template"
@@ -14,11 +14,11 @@
   "environment": "client",
   "entrypoints": {
     "meteor": [
-      "com.example.addon.Addon"
+      "de.ccetl.particles.addon.Addon"
     ]
   },
   "mixins": [
-    "addon-template.mixins.json"
+    "particle-effects-for-meteor.mixin.json"
   ],
   "custom": {
     "meteor-client:color": "225,25,25"
