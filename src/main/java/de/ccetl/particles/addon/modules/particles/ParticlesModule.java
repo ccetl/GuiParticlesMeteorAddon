@@ -60,6 +60,8 @@ public class ParticlesModule extends Module {
         config.setShapeSupplier(() -> new Shape(ShapeType.TRIANGLE));
         config.setCenterLines(true);
         config.setNumber(200);
+        config.setMinSpeed(0.4);
+        config.setMaxSpeed(0.6);
         particleSystem.init();
     }
 

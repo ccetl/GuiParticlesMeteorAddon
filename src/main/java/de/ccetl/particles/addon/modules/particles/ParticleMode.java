@@ -14,6 +14,8 @@ public enum ParticleMode {
             config.setShapeSupplier(() -> new Shape(ShapeType.CIRCLE));
             config.setNumber(20);
             module.number.set(20);
+            config.setMinSpeed(1);
+            config.setMaxSpeed(0.85);
         }
 
         @Override
@@ -30,6 +32,8 @@ public enum ParticleMode {
             config.setShapeSupplier(() -> new Shape(ShapeType.TRIANGLE));
             config.setNumber(200);
             module.number.set(200);
+            config.setMinSpeed(0.4);
+            config.setMaxSpeed(0.6);
         }
 
         @Override
