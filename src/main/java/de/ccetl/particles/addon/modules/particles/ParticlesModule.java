@@ -5,6 +5,7 @@ import de.ccetl.jparticles.core.shape.Shape;
 import de.ccetl.jparticles.core.shape.ShapeType;
 import de.ccetl.jparticles.event.ResizeEvent;
 import de.ccetl.jparticles.systems.ParticleSystem;
+import de.ccetl.jparticles.systems.SnowSystem;
 import de.ccetl.jparticles.types.particle.LineShape;
 import de.ccetl.jparticles.types.particle.Obstacle;
 import de.ccetl.particles.addon.event.RenderScreenEvent;
@@ -32,18 +33,23 @@ public class ParticlesModule extends Module {
             return EffectRenderer.INSTANCE;
         }
     };
-    private final ParticleSystem particleSystem = new ParticleSystem(config, mc.getWindow().getScaledWidth(), mc.getWindow().getScaledHeight());
+    protected final ParticleSystem particleSystem = new ParticleSystem(config, mc.getWindow().getScaledWidth(), mc.getWindow().getScaledHeight());
+    private final Setting<ParticleMode> mode;
+    private final SnowSystem.DefaultConfig snowConfig = new SnowSystem.DefaultConfig() {
+        @Override
+        public Renderer getRenderer() {
+            return EffectRenderer.INSTANCE;
+        }
+    };
+    protected final SnowSystem snowSystem = new SnowSystem(snowConfig, mc.getWindow().getScaledWidth(), mc.getWindow().getScaledHeight());
 
     public ParticlesModule() {
         super(Categories.Render, "Particles", "Adds GUI particle effects.");
         MeteorClient.EVENT_BUS.subscribe(new ConsumerListener<>(WindowResizedEvent.class, 0, this::onResize));
         SettingGroup defaultGroup = settings.getDefaultGroup();
-        defaultGroup.add(new ColorSetting.Builder().name("color").description("The color of the particles.").defaultValue(Color.MAGENTA).onChanged(settingColor -> config.setColorSupplier(settingColor::getPacked)).build());
-        number = defaultGroup.add(new IntSetting.Builder().name("number").description("The amount of particles.").defaultValue(200).min(1).max(5000).onChanged(config::setNumber).build());
-        defaultGroup.add(new EnumSetting.Builder<ParticleMode>().name("mode").defaultValue(ParticleMode.LINES).onChanged(v -> {
-            v.apply(this, config);
-            particleSystem.init();
-        }).build());
+        mode = defaultGroup.add(new EnumSetting.Builder<ParticleMode>().name("mode").defaultValue(ParticleMode.LINES).onChanged(v -> v.apply(this, config)).build());
+        number = defaultGroup.add(new IntSetting.Builder().name("number").description("The amount of particles.").defaultValue(200).min(1).max(5000).visible(() -> mode.get() != ParticleMode.SNOW).onChanged(config::setNumber).build());
+        defaultGroup.add(new ColorSetting.Builder().name("color").description("The color of the particles.").defaultValue(Color.MAGENTA).visible(() -> mode.get() != ParticleMode.SNOW).onChanged(settingColor -> config.setColorSupplier(settingColor::getPacked)).build());
         defaultGroup.add(chatScreen);
         config.setMinRadius(1);
         config.setMaxRadius(3);
@@ -63,6 +69,9 @@ public class ParticlesModule extends Module {
         config.setMinSpeed(0.4);
         config.setMaxSpeed(0.6);
         particleSystem.init();
+        snowConfig.setStrict(true);
+        snowConfig.setNumber(80);
+        snowSystem.init();
     }
 
     @Override
@@ -75,6 +84,7 @@ public class ParticlesModule extends Module {
     @Override
     public void onActivate() {
         particleSystem.init();
+        snowSystem.init();
     }
 
     @EventHandler
@@ -84,20 +94,21 @@ public class ParticlesModule extends Module {
         }
 
         EffectRenderer.context = event.getContext();
-        particleSystem.draw(event.getMouseX(), event.getMouseY());
+        mode.get().render(this, event);
     }
 
     @EventHandler
     public void onOpenScreen(OpenScreenEvent event) {
         if (event.screen == null || event.screen instanceof ChatScreen && !chatScreen.get()) {
-            particleSystem.pause();
+            mode.get().stop(this);
         } else {
-            particleSystem.start();
+            mode.get().start(this);
         }
     }
 
     public void onResize(WindowResizedEvent event) {
         ResizeEvent resizeEvent = new ResizeEvent(mc.getWindow().getScaledWidth(), mc.getWindow().getScaledHeight());
         particleSystem.onResize(resizeEvent);
+        snowSystem.onResize(resizeEvent);
     }
 }
