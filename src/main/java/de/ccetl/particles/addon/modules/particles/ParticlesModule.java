@@ -18,6 +18,7 @@ import meteordevelopment.meteorclient.gui.widgets.WWidget;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
+import meteordevelopment.meteorclient.utils.player.ChatUtils;
 import meteordevelopment.meteorclient.utils.render.color.Color;
 import meteordevelopment.orbit.EventHandler;
 import meteordevelopment.orbit.listeners.ConsumerListener;
@@ -46,11 +47,13 @@ public class ParticlesModule extends Module {
     public ParticlesModule() {
         super(Categories.Render, "Particles", "Adds GUI particle effects.");
         MeteorClient.EVENT_BUS.subscribe(new ConsumerListener<>(WindowResizedEvent.class, 0, this::onResize));
+
         var defaultGroup = settings.getDefaultGroup();
         mode = defaultGroup.add(new EnumSetting.Builder<ParticleMode>().name("mode").defaultValue(ParticleMode.LINES).onChanged(v -> v.apply(this, config)).build());
         number = defaultGroup.add(new IntSetting.Builder().name("number").description("The amount of particles.").defaultValue(200).min(1).max(5000).visible(() -> mode.get() != ParticleMode.SNOW).onChanged(config::setNumber).build());
         defaultGroup.add(new ColorSetting.Builder().name("color").description("The color of the particles.").defaultValue(Color.MAGENTA).visible(() -> mode.get() != ParticleMode.SNOW).onChanged(settingColor -> config.setColorSupplier(settingColor::getPacked)).build());
         defaultGroup.add(chatScreen);
+
         config.setMinRadius(1);
         config.setMaxRadius(3);
         config.setRange(5000);

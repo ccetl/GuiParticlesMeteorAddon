@@ -4,6 +4,7 @@
   "package": "de.ccetl.particles.addon.mixin",
   "compatibilityLevel": "JAVA_17",
   "client": [
+    "MixinWindow",
     "meteor.INoRender",
     "meteor.MixinNoRender",
     "screens.MixinChatScreen",
