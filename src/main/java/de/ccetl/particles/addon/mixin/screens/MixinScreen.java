@@ -15,10 +15,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(value = Screen.class)
 public abstract class MixinScreen {
+
     @Inject(method = "renderBackground", at = @At(value = "HEAD"), cancellable = true)
     public void renderBackgroundNoRenderHook(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         if (Utils.canUpdate()) {
-            NoRender noRender = Modules.get().get(NoRender.class);
+            var noRender = Modules.get().get(NoRender.class);
             if (noRender.isActive() && ((INoRender) noRender).getNoGuiBackground().get()) {
                 MeteorClient.EVENT_BUS.post(RenderScreenEvent.set(context, mouseX, mouseY));
                 ci.cancel();
@@ -30,4 +31,5 @@ public abstract class MixinScreen {
     public void renderBackgroundHook(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         MeteorClient.EVENT_BUS.post(RenderScreenEvent.set(context, mouseX, mouseY));
     }
+
 }

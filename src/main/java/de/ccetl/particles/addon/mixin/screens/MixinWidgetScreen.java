@@ -11,8 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(WidgetScreen.class)
 public abstract class MixinWidgetScreen {
+
     @Inject(method = "render", at = @At(value = "INVOKE", target = "Lnet/minecraft/client/util/Window;getScaleFactor()D", shift = At.Shift.BEFORE))
     public void renderWidgetScreenHook(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         MeteorClient.EVENT_BUS.post(RenderScreenEvent.set(context, mouseX, mouseY));
     }
+
 }

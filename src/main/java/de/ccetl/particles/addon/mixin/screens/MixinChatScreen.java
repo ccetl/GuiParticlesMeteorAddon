@@ -11,8 +11,11 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(ChatScreen.class)
 public abstract class MixinChatScreen {
+
     @Inject(method = "renderBackground", at = @At("RETURN"))
     public void renderBackgroundHook(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
-        MeteorClient.EVENT_BUS.post(RenderScreenEvent.set(context, mouseX, mouseY));
+        var renderScreenEvent = RenderScreenEvent.set(context, mouseX, mouseY);
+        MeteorClient.EVENT_BUS.post(renderScreenEvent);
     }
+
 }

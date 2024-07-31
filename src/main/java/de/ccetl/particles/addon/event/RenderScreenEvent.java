@@ -3,10 +3,15 @@ package de.ccetl.particles.addon.event;
 import net.minecraft.client.gui.DrawContext;
 
 public class RenderScreenEvent {
-    public final static RenderScreenEvent INSTANCE = new RenderScreenEvent();
+
+    public static final RenderScreenEvent INSTANCE = new RenderScreenEvent();
+
     private DrawContext context;
     private int mouseX;
     private int mouseY;
+
+    private RenderScreenEvent() {
+    }
 
     public static RenderScreenEvent set(DrawContext context, int mouseX, int mouseY) {
         INSTANCE.context = context;
@@ -26,4 +31,5 @@ public class RenderScreenEvent {
     public int getMouseY() {
         return mouseY;
     }
+
 }

@@ -15,7 +15,6 @@ import meteordevelopment.meteorclient.events.game.OpenScreenEvent;
 import meteordevelopment.meteorclient.events.game.WindowResizedEvent;
 import meteordevelopment.meteorclient.gui.GuiTheme;
 import meteordevelopment.meteorclient.gui.widgets.WWidget;
-import meteordevelopment.meteorclient.gui.widgets.pressable.WButton;
 import meteordevelopment.meteorclient.settings.*;
 import meteordevelopment.meteorclient.systems.modules.Categories;
 import meteordevelopment.meteorclient.systems.modules.Module;
@@ -25,6 +24,7 @@ import meteordevelopment.orbit.listeners.ConsumerListener;
 import net.minecraft.client.gui.screen.ChatScreen;
 
 public class ParticlesModule extends Module {
+
     protected final Setting<Boolean> chatScreen = new BoolSetting.Builder().name("chat-screen").description("Whether particles get rendered in the chat GUI.").defaultValue(true).build();
     protected final Setting<Integer> number;
     private final ParticleSystem.DefaultConfig config = new ParticleSystem.DefaultConfig() {
@@ -33,7 +33,7 @@ public class ParticlesModule extends Module {
             return EffectRenderer.INSTANCE;
         }
     };
-    protected final ParticleSystem particleSystem = new ParticleSystem(config, mc.getWindow().getScaledWidth(), mc.getWindow().getScaledHeight());
+    protected final ParticleSystem particleSystem = new ParticleSystem(config, mc.getWindow().getWidth(), mc.getWindow().getHeight());
     private final Setting<ParticleMode> mode;
     private final SnowSystem.DefaultConfig snowConfig = new SnowSystem.DefaultConfig() {
         @Override
@@ -41,12 +41,12 @@ public class ParticlesModule extends Module {
             return EffectRenderer.INSTANCE;
         }
     };
-    protected final SnowSystem snowSystem = new SnowSystem(snowConfig, mc.getWindow().getScaledWidth(), mc.getWindow().getScaledHeight());
+    protected final SnowSystem snowSystem = new SnowSystem(snowConfig, mc.getWindow().getWidth(), mc.getWindow().getHeight());
 
     public ParticlesModule() {
         super(Categories.Render, "Particles", "Adds GUI particle effects.");
         MeteorClient.EVENT_BUS.subscribe(new ConsumerListener<>(WindowResizedEvent.class, 0, this::onResize));
-        SettingGroup defaultGroup = settings.getDefaultGroup();
+        var defaultGroup = settings.getDefaultGroup();
         mode = defaultGroup.add(new EnumSetting.Builder<ParticleMode>().name("mode").defaultValue(ParticleMode.LINES).onChanged(v -> v.apply(this, config)).build());
         number = defaultGroup.add(new IntSetting.Builder().name("number").description("The amount of particles.").defaultValue(200).min(1).max(5000).visible(() -> mode.get() != ParticleMode.SNOW).onChanged(config::setNumber).build());
         defaultGroup.add(new ColorSetting.Builder().name("color").description("The color of the particles.").defaultValue(Color.MAGENTA).visible(() -> mode.get() != ParticleMode.SNOW).onChanged(settingColor -> config.setColorSupplier(settingColor::getPacked)).build());
@@ -76,7 +76,7 @@ public class ParticlesModule extends Module {
 
     @Override
     public WWidget getWidget(GuiTheme theme) {
-        WButton reset = theme.button("Reset");
+        var reset = theme.button("Reset");
         reset.action = particleSystem::init;
         return reset;
     }
@@ -93,8 +93,8 @@ public class ParticlesModule extends Module {
             return;
         }
 
-        EffectRenderer.context = event.getContext();
         mode.get().render(this, event);
+        EffectRenderer.INSTANCE.renderAndClear(event.getContext());
     }
 
     @EventHandler
@@ -107,8 +107,9 @@ public class ParticlesModule extends Module {
     }
 
     public void onResize(WindowResizedEvent event) {
-        ResizeEvent resizeEvent = new ResizeEvent(mc.getWindow().getScaledWidth(), mc.getWindow().getScaledHeight());
+        var resizeEvent = new ResizeEvent(mc.getWindow().getWidth(), mc.getWindow().getHeight());
         particleSystem.onResize(resizeEvent);
         snowSystem.onResize(resizeEvent);
     }
+
 }

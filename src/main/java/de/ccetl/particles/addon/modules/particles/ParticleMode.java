@@ -6,6 +6,7 @@ import de.ccetl.jparticles.systems.ParticleSystem;
 import de.ccetl.particles.addon.event.RenderScreenEvent;
 
 enum ParticleMode implements ParticleConfig {
+
     @SuppressWarnings("unused") TRAILS {
         @Override
         public void apply(ParticlesModule module, ParticleSystem.DefaultConfig config) {
@@ -41,6 +42,7 @@ enum ParticleMode implements ParticleConfig {
         public String toString() {
             return "Trails";
         }
+
     },
     LINES {
         @Override
@@ -77,6 +79,7 @@ enum ParticleMode implements ParticleConfig {
         public String toString() {
             return "Lines";
         }
+
     },
     SNOW {
         @Override
@@ -106,5 +109,7 @@ enum ParticleMode implements ParticleConfig {
         public String toString() {
             return "Snow";
         }
+
     }
+
 }

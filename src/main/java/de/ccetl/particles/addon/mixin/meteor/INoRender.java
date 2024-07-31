@@ -7,6 +7,8 @@ import org.spongepowered.asm.mixin.gen.Accessor;
 
 @Mixin(value = NoRender.class, remap = false)
 public interface INoRender {
+
     @Accessor
     Setting<Boolean> getNoGuiBackground();
+
 }

@@ -11,8 +11,10 @@ import org.spongepowered.asm.mixin.injection.callback.CallbackInfo;
 
 @Mixin(DeathScreen.class)
 public abstract class MixinDeathScreen {
+
     @Inject(method = "renderBackground", at = @At("RETURN"))
     public void renderBackgroundHook(DrawContext context, int mouseX, int mouseY, float delta, CallbackInfo ci) {
         MeteorClient.EVENT_BUS.post(RenderScreenEvent.set(context, mouseX, mouseY));
     }
+
 }
