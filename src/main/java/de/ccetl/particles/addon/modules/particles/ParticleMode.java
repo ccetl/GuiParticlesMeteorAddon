@@ -42,7 +42,6 @@ enum ParticleMode implements ParticleConfig {
         public String toString() {
             return "Trails";
         }
-
     },
     LINES {
         @Override
@@ -79,7 +78,6 @@ enum ParticleMode implements ParticleConfig {
         public String toString() {
             return "Lines";
         }
-
     },
     SNOW {
         @Override
@@ -109,7 +107,6 @@ enum ParticleMode implements ParticleConfig {
         public String toString() {
             return "Snow";
         }
-
     }
 
 }
